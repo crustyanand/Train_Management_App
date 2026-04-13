@@ -5,17 +5,17 @@ import java.util.List;
 public class TrainManagementAppTest {
 
     @Test
-    public void testTrainInitialization() {
-        // Get the initial consist from the app
-        List<String> consist = TrainManagementApp.getInitialConsist();
+    public void testPassengerBogieOperations() {
+        List<String> bogies = TrainManagementApp.getProcessedBogies();
 
-        // Verify the list is not null
-        assertNotNull(consist, "Train consist list should be initialized.");
+        // 1. Verify 'AC Chair' was successfully removed
+        assertFalse(bogies.contains("AC Chair"), "AC Chair should have been removed.");
 
-        // Verify the initial count is 0
-        assertEquals(0, consist.size(), "Initial bogie count should be 0.");
+        // 2. Verify 'Sleeper' and 'First Class' still exist
+        assertTrue(bogies.contains("Sleeper"), "Sleeper should exist in the consist.");
+        assertTrue(bogies.contains("First Class"), "First Class should exist in the consist.");
 
-        // Verify the list is empty
-        assertTrue(consist.isEmpty(), "Train consist should be empty on startup.");
+        // 3. Verify final size is 2
+        assertEquals(2, bogies.size(), "The final bogie count should be 2.");
     }
 }
