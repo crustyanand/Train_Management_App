@@ -1,50 +1,60 @@
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * =======================================================
- * MAIN CLASS - UseCase3TrainConsistMgmnt
+ * MAIN CLASS - UseCase4TrainConsistMgmnt
  * =======================================================
- * Use Case 3: Track Unique Bogie IDs
+ * Use Case 4: Maintain Ordered Bogie Consist
  * * Description:
- * This class ensures that duplicate bogie IDs are not
- * added into the train formation using HashSet.
+ * This class models the physical chaining of train bogies
+ * using LinkedList for ordered operations.
  */
 public class TrainManagementApp {
     public static void main(String[] args) {
         System.out.println("=======================================");
-        System.out.println(" UC3 - Track Unique Bogie IDs ");
+        System.out.println(" UC4 - Maintain Ordered Bogie Consist ");
         System.out.println("=======================================\n");
 
-        // Create a Set to store unique bogie IDs
-        // HashSet stores only unique values
-        Set<String> bogies = getUniqueBogies();
+        // Create a LinkedList
+        // LinkedList maintains insertion order and allows fast inserts/removals
+        LinkedList<String> trainConsist = new LinkedList<>();
 
-        // Display the results
-        System.out.println("Bogie IDs After Insertion:");
-        System.out.println(bogies);
+        // Add initial bogies
+        trainConsist.add("Engine");
+        trainConsist.add("Sleeper");
+        trainConsist.add("AC");
+        trainConsist.add("Cargo");
+        trainConsist.add("Guard");
 
-        System.out.println("\nNote:");
-        System.out.println("Duplicates are automatically ignored by HashSet.");
+        System.out.println("Initial Train Consist:");
+        System.out.println(trainConsist);
 
-        System.out.println("\nUC3 uniqueness validation completed...");
+        // Insert 'Pantry Car' at position 2
+        System.out.println("\nAfter Inserting 'Pantry Car' at position 2:");
+        trainConsist.add(2, "Pantry Car");
+        System.out.println(trainConsist);
+
+        // Remove First and Last Bogie
+        System.out.println("\nAfter Removing First and Last Bogie:");
+        trainConsist.removeFirst();
+        trainConsist.removeLast();
+        System.out.println(trainConsist);
+
+        System.out.println("\nUC4 ordered consist operations completed...");
     }
 
-    // Helper method for logic and testing
-    public static Set<String> getUniqueBogies() {
-        Set<String> bogies = new HashSet<>();
-
-        // ---- ADD IDs (including duplicates) ----
-        // add() inserts bogie IDs into the set
-        bogies.add("B6101");
-        bogies.add("B6102");
-        bogies.add("B6103");
-        bogies.add("B6104");
-
-        // Duplicate entries will be ignored internally by HashSet
-        bogies.add("B6101"); // Duplicate entry
-        bogies.add("B6102"); // Duplicate entry
-
-        return bogies;
+    // Helper method for testing the logic
+    public static LinkedList<String> getFinalConsist() {
+        LinkedList<String> list = new LinkedList<>();
+        list.add("Engine");
+        list.add("Sleeper");
+        list.add("AC");
+        list.add("Cargo");
+        list.add("Guard");
+        list.add(2, "Pantry Car");
+        list.removeFirst();
+        list.removeLast();
+        return list;
     }
 }
