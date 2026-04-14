@@ -1,51 +1,75 @@
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * =======================================================
  * MAIN CLASS - TrainManagementApp
  * =======================================================
- * Use Case 11: Validate Train ID & Cargo Codes (Regex)
+ * Use Case 12: Safety Compliance Check for Goods Bogies
  * Description:
- * This class uses Regular Expressions to enforce data
- * integrity by validating input formats for Train IDs
- * and Cargo Codes.
+ * Enforces safety rules using allMatch() and lambda expressions.
+ * Rule: Cylindrical bogies MUST carry Petroleum.
  */
 public class TrainManagementApp {
 
-    // Regex Patterns
-    private static final String TRAIN_ID_REGEX = "TRN-\\d{4}";
-    private static final String CARGO_CODE_REGEX = "PET-[A-Z]{2}";
+    public static class GoodsBogie {
+        String type;
+        String cargo;
+
+        public GoodsBogie(String type, String cargo) {
+            this.type = type;
+            this.cargo = cargo;
+        }
+
+        @Override
+        public String toString() {
+            return "[" + type + " | Cargo: " + cargo + "]";
+        }
+    }
 
     public static void main(String[] args) {
         System.out.println("=======================================");
-        System.out.println(" UC11 - Regex Format Validation ");
+        System.out.println(" UC12 - Safety Compliance Check ");
         System.out.println("=======================================\n");
 
-        // Example Inputs
-        String trainID = "TRN-1234";
-        String cargoCode = "PET-AB";
+        // 1. Prepare list of goods bogies
+        List<GoodsBogie> goodsConsist = getGoodsBogies();
 
-        // Validate Train ID
-        boolean isTrainValid = validateInput(trainID, TRAIN_ID_REGEX);
-        System.out.println("Train ID: " + trainID + " -> " + (isTrainValid ? "VALID" : "INVALID"));
+        System.out.println("Inspecting Goods Consist:");
+        goodsConsist.forEach(System.out::println);
 
-        // Validate Cargo Code
-        boolean isCargoValid = validateInput(cargoCode, CARGO_CODE_REGEX);
-        System.out.println("Cargo Code: " + cargoCode + " -> " + (isCargoValid ? "VALID" : "INVALID"));
+        // 2. Perform Safety Check
+        boolean isSafe = checkSafetyCompliance(goodsConsist);
 
-        System.out.println("\nUC11 regex validation completed...");
+        // 3. Display Result
+        System.out.println("\n---------------------------------------");
+        if (isSafe) {
+            System.out.println(" STATUS: SAFETY COMPLIANT (Green Signal) ");
+        } else {
+            System.out.println(" STATUS: SAFETY VIOLATION DETECTED (Red Signal) ");
+        }
+        System.out.println("---------------------------------------");
     }
 
     /**
-     * Logic: Compiles pattern and uses Matcher to check if
-     * the entire input string matches the regex.
+     * Logic: allMatch() ensures every bogie satisfies the predicate.
+     * Predicate logic: If it's Cylindrical, cargo must be Petroleum.
+     * Otherwise, any cargo is fine.
      */
-    public static boolean validateInput(String input, String regex) {
-        if (input == null)
-            return false;
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(input);
-        return matcher.matches();
+    public static boolean checkSafetyCompliance(List<GoodsBogie> bogies) {
+        return bogies.stream().allMatch(b -> {
+            if (b.type.equalsIgnoreCase("Cylindrical")) {
+                return b.cargo.equalsIgnoreCase("Petroleum");
+            }
+            return true; // Non-cylindrical bogies are always safe in this rule
+        });
+    }
+
+    public static List<GoodsBogie> getGoodsBogies() {
+        List<GoodsBogie> list = new ArrayList<>();
+        list.add(new GoodsBogie("Rectangular", "Coal"));
+        list.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        list.add(new GoodsBogie("Box", "Electronics"));
+        return list;
     }
 }
