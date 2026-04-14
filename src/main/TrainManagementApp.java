@@ -1,70 +1,51 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * =======================================================
  * MAIN CLASS - TrainManagementApp
  * =======================================================
- * Use Case 10: Count Total Seats in Train (reduce)
+ * Use Case 11: Validate Train ID & Cargo Codes (Regex)
  * Description:
- * This class uses Stream reduction to aggregate individual
- * bogie capacities into a single total value.
+ * This class uses Regular Expressions to enforce data
+ * integrity by validating input formats for Train IDs
+ * and Cargo Codes.
  */
 public class TrainManagementApp {
 
-    // Inner Bogie class (Reused from previous UCs)
-    public static class Bogie {
-        String name;
-        int capacity;
-
-        public Bogie(String name, int capacity) {
-            this.name = name;
-            this.capacity = capacity;
-        }
-
-        @Override
-        public String toString() {
-            return name + " (" + capacity + " seats)";
-        }
-    }
+    // Regex Patterns
+    private static final String TRAIN_ID_REGEX = "TRN-\\d{4}";
+    private static final String CARGO_CODE_REGEX = "PET-[A-Z]{2}";
 
     public static void main(String[] args) {
         System.out.println("=======================================");
-        System.out.println(" UC10 - Count Total Seats in Train ");
+        System.out.println(" UC11 - Regex Format Validation ");
         System.out.println("=======================================\n");
 
-        // 1. Initialize the list
-        List<Bogie> bogies = getBogieList();
+        // Example Inputs
+        String trainID = "TRN-1234";
+        String cargoCode = "PET-AB";
 
-        System.out.println("Current Train Consist:");
-        bogies.forEach(System.out::println);
+        // Validate Train ID
+        boolean isTrainValid = validateInput(trainID, TRAIN_ID_REGEX);
+        System.out.println("Train ID: " + trainID + " -> " + (isTrainValid ? "VALID" : "INVALID"));
 
-        // 2. Aggregate using Stream (Map + Reduce)
-        int totalSeats = calculateTotalSeats(bogies);
+        // Validate Cargo Code
+        boolean isCargoValid = validateInput(cargoCode, CARGO_CODE_REGEX);
+        System.out.println("Cargo Code: " + cargoCode + " -> " + (isCargoValid ? "VALID" : "INVALID"));
 
-        // 3. Display Result
-        System.out.println("\n---------------------------------------");
-        System.out.println(" TOTAL SEATING CAPACITY : " + totalSeats);
-        System.out.println("---------------------------------------");
-
-        System.out.println("\nUC10 aggregation analytics completed...");
+        System.out.println("\nUC11 regex validation completed...");
     }
 
     /**
-     * Logic: map() extracts capacity, reduce() sums them up.
+     * Logic: Compiles pattern and uses Matcher to check if
+     * the entire input string matches the regex.
      */
-    public static int calculateTotalSeats(List<Bogie> bogies) {
-        return bogies.stream()
-                .map(b -> b.capacity) // Transform Bogie object to Integer
-                .reduce(0, Integer::sum); // Aggregate using sum
-    }
-
-    public static List<Bogie> getBogieList() {
-        List<Bogie> bogies = new ArrayList<>();
-        bogies.add(new Bogie("Sleeper", 72));
-        bogies.add(new Bogie("AC Chair", 56));
-        bogies.add(new Bogie("First Class", 24));
-        bogies.add(new Bogie("General", 90));
-        return bogies;
+    public static boolean validateInput(String input, String regex) {
+        if (input == null)
+            return false;
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+        return matcher.matches();
     }
 }
