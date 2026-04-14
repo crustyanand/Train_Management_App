@@ -4,32 +4,47 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TrainManagementAppTest {
 
     @Test
-    public void testCargo_SafeAssignment() {
-        TrainManagementApp.GoodsBogie bogie = new TrainManagementApp.GoodsBogie("Cylindrical");
-        bogie.assignCargo("Petroleum");
-        assertEquals("Petroleum", bogie.cargo, "Cargo should be assigned correctly for Cylindrical bogies.");
+    public void testSort_BasicSorting() {
+        int[] input = { 72, 56, 24, 70, 60 };
+        int[] expected = { 24, 56, 60, 70, 72 };
+
+        TrainManagementApp.bubbleSort(input);
+        assertArrayEquals(expected, input, "Array should be sorted in ascending order.");
     }
 
     @Test
-    public void testCargo_UnsafeAssignmentHandled() {
-        TrainManagementApp.GoodsBogie bogie = new TrainManagementApp.GoodsBogie("Rectangular");
-        // This method handles the exception internally via try-catch
-        bogie.assignCargo("Petroleum");
+    public void testSort_AlreadySortedArray() {
+        int[] input = { 10, 20, 30 };
+        int[] expected = { 10, 20, 30 };
 
-        assertNotEquals("Petroleum", bogie.cargo, "Cargo should NOT be updated if safety violation occurs.");
-        assertEquals("Empty", bogie.cargo);
+        TrainManagementApp.bubbleSort(input);
+        assertArrayEquals(expected, input);
     }
 
     @Test
-    public void testCargo_ProgramContinuesAfterException() {
-        TrainManagementApp.GoodsBogie bogie = new TrainManagementApp.GoodsBogie("Rectangular");
+    public void testSort_DuplicateValues() {
+        int[] input = { 50, 20, 50, 10 };
+        int[] expected = { 10, 20, 50, 50 };
 
-        // Attempt bad assignment
-        bogie.assignCargo("Petroleum");
+        TrainManagementApp.bubbleSort(input);
+        assertArrayEquals(expected, input);
+    }
 
-        // Attempt good assignment immediately after
-        bogie.assignCargo("Coal");
+    @Test
+    public void testSort_SingleElementArray() {
+        int[] input = { 100 };
+        int[] expected = { 100 };
 
-        assertEquals("Coal", bogie.cargo, "System should recover and allow valid assignments after a failure.");
+        TrainManagementApp.bubbleSort(input);
+        assertArrayEquals(expected, input);
+    }
+
+    @Test
+    public void testSort_AllEqualValues() {
+        int[] input = { 40, 40, 40 };
+        int[] expected = { 40, 40, 40 };
+
+        TrainManagementApp.bubbleSort(input);
+        assertArrayEquals(expected, input);
     }
 }
