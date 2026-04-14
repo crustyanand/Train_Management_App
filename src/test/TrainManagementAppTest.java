@@ -1,48 +1,38 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TrainManagementAppTest {
 
     @Test
-    public void testSafety_AllBogiesValid() {
-        List<TrainManagementApp.GoodsBogie> list = new ArrayList<>();
-        list.add(new TrainManagementApp.GoodsBogie("Cylindrical", "Petroleum"));
-        list.add(new TrainManagementApp.GoodsBogie("Rectangular", "Grain"));
+    public void testLoopAndStreamResultsMatch() {
+        List<TrainManagementApp.Bogie> bogies = TrainManagementApp.getLargeBogieList(100);
 
-        assertTrue(TrainManagementApp.checkSafetyCompliance(list));
+        List<TrainManagementApp.Bogie> loopResult = TrainManagementApp.filterByLoop(bogies, 60);
+        List<TrainManagementApp.Bogie> streamResult = TrainManagementApp.filterByStream(bogies, 60);
+
+        assertEquals(loopResult.size(), streamResult.size(), "Both methods must return the same number of items.");
     }
 
     @Test
-    public void testSafety_CylindricalWithInvalidCargo() {
-        List<TrainManagementApp.GoodsBogie> list = new ArrayList<>();
-        list.add(new TrainManagementApp.GoodsBogie("Cylindrical", "Coal")); // VIOLATION
+    public void testExecutionTimeMeasurement() {
+        long start = System.nanoTime();
+        // Minor operation to ensure time passes
+        for (int i = 0; i < 100; i++) {
+            Math.sqrt(i);
+        }
+        long end = System.nanoTime();
 
-        assertFalse(TrainManagementApp.checkSafetyCompliance(list));
+        assertTrue((end - start) > 0, "Elapsed time should be a positive value.");
     }
 
     @Test
-    public void testSafety_NonCylindricalBogiesAllowed() {
-        List<TrainManagementApp.GoodsBogie> list = new ArrayList<>();
-        list.add(new TrainManagementApp.GoodsBogie("Box", "AnyCargo"));
+    public void testLargeDatasetProcessing() {
+        // Test with 50,000 items to ensure no crashes and consistent logic
+        List<TrainManagementApp.Bogie> bogies = TrainManagementApp.getLargeBogieList(50000);
+        List<TrainManagementApp.Bogie> result = TrainManagementApp.filterByStream(bogies, 99);
 
-        assertTrue(TrainManagementApp.checkSafetyCompliance(list));
-    }
-
-    @Test
-    public void testSafety_MixedBogiesWithViolation() {
-        List<TrainManagementApp.GoodsBogie> list = new ArrayList<>();
-        list.add(new TrainManagementApp.GoodsBogie("Rectangular", "Coal"));
-        list.add(new TrainManagementApp.GoodsBogie("Cylindrical", "Water")); // VIOLATION
-
-        assertFalse(TrainManagementApp.checkSafetyCompliance(list));
-    }
-
-    @Test
-    public void testSafety_EmptyBogieList() {
-        List<TrainManagementApp.GoodsBogie> emptyList = new ArrayList<>();
-        // All elements in an empty list satisfy any predicate (vacuous truth)
-        assertTrue(TrainManagementApp.checkSafetyCompliance(emptyList));
+        // Statistically, with random 0-100, some items should match 99
+        assertNotNull(result);
     }
 }

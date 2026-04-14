@@ -1,75 +1,79 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * =======================================================
  * MAIN CLASS - TrainManagementApp
  * =======================================================
- * Use Case 12: Safety Compliance Check for Goods Bogies
+ * Use Case 13: Performance Comparison (Loops vs Streams)
  * Description:
- * Enforces safety rules using allMatch() and lambda expressions.
- * Rule: Cylindrical bogies MUST carry Petroleum.
+ * Benchmarks the execution time of traditional loops
+ * versus Stream API for filtering operations.
  */
 public class TrainManagementApp {
 
-    public static class GoodsBogie {
-        String type;
-        String cargo;
+    public static class Bogie {
+        String name;
+        int capacity;
 
-        public GoodsBogie(String type, String cargo) {
-            this.type = type;
-            this.cargo = cargo;
-        }
-
-        @Override
-        public String toString() {
-            return "[" + type + " | Cargo: " + cargo + "]";
+        public Bogie(String name, int capacity) {
+            this.name = name;
+            this.capacity = capacity;
         }
     }
 
     public static void main(String[] args) {
         System.out.println("=======================================");
-        System.out.println(" UC12 - Safety Compliance Check ");
+        System.out.println(" UC13 - Performance Comparison ");
         System.out.println("=======================================\n");
 
-        // 1. Prepare list of goods bogies
-        List<GoodsBogie> goodsConsist = getGoodsBogies();
+        List<Bogie> bogies = getLargeBogieList(10000);
 
-        System.out.println("Inspecting Goods Consist:");
-        goodsConsist.forEach(System.out::println);
+        // 1. Benchmark Loop
+        long startTimeLoop = System.nanoTime();
+        List<Bogie> loopResult = filterByLoop(bogies, 60);
+        long endTimeLoop = System.nanoTime();
+        long durationLoop = endTimeLoop - startTimeLoop;
 
-        // 2. Perform Safety Check
-        boolean isSafe = checkSafetyCompliance(goodsConsist);
+        // 2. Benchmark Stream
+        long startTimeStream = System.nanoTime();
+        List<Bogie> streamResult = filterByStream(bogies, 60);
+        long endTimeStream = System.nanoTime();
+        long durationStream = endTimeStream - startTimeStream;
 
-        // 3. Display Result
-        System.out.println("\n---------------------------------------");
-        if (isSafe) {
-            System.out.println(" STATUS: SAFETY COMPLIANT (Green Signal) ");
-        } else {
-            System.out.println(" STATUS: SAFETY VIOLATION DETECTED (Red Signal) ");
-        }
-        System.out.println("---------------------------------------");
+        // 3. Display Comparison
+        System.out.println("Dataset Size: " + bogies.size() + " bogies");
+        System.out.println("Loop Time   : " + durationLoop + " ns");
+        System.out.println("Stream Time : " + durationStream + " ns");
+        System.out.println("\nResults Match: " + (loopResult.size() == streamResult.size()));
+
+        System.out.println("\nUC13 performance benchmarking completed...");
     }
 
-    /**
-     * Logic: allMatch() ensures every bogie satisfies the predicate.
-     * Predicate logic: If it's Cylindrical, cargo must be Petroleum.
-     * Otherwise, any cargo is fine.
-     */
-    public static boolean checkSafetyCompliance(List<GoodsBogie> bogies) {
-        return bogies.stream().allMatch(b -> {
-            if (b.type.equalsIgnoreCase("Cylindrical")) {
-                return b.cargo.equalsIgnoreCase("Petroleum");
+    // Imperative Approach (Traditional Loop)
+    public static List<Bogie> filterByLoop(List<Bogie> bogies, int threshold) {
+        List<Bogie> filtered = new ArrayList<>();
+        for (Bogie b : bogies) {
+            if (b.capacity > threshold) {
+                filtered.add(b);
             }
-            return true; // Non-cylindrical bogies are always safe in this rule
-        });
+        }
+        return filtered;
     }
 
-    public static List<GoodsBogie> getGoodsBogies() {
-        List<GoodsBogie> list = new ArrayList<>();
-        list.add(new GoodsBogie("Rectangular", "Coal"));
-        list.add(new GoodsBogie("Cylindrical", "Petroleum"));
-        list.add(new GoodsBogie("Box", "Electronics"));
+    // Declarative Approach (Stream API)
+    public static List<Bogie> filterByStream(List<Bogie> bogies, int threshold) {
+        return bogies.stream()
+                .filter(b -> b.capacity > threshold)
+                .collect(Collectors.toList());
+    }
+
+    public static List<Bogie> getLargeBogieList(int size) {
+        List<Bogie> list = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            list.add(new Bogie("Bogie-" + i, (int) (Math.random() * 100)));
+        }
         return list;
     }
 }
