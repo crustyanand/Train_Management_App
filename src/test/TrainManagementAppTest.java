@@ -2,62 +2,54 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class TrainManagementAppTest {
 
     @Test
-    public void testFilter_CapacityGreaterThanThreshold() {
+    public void testGrouping_BogiesGroupedByType() {
         List<TrainManagementApp.Bogie> bogies = TrainManagementApp.getBogieList();
-        // Threshold 70: Should return Sleeper(72) and General(90)
-        List<TrainManagementApp.Bogie> result = TrainManagementApp.filterHighCapacityBogies(bogies, 70);
-        assertEquals(2, result.size());
+        Map<String, List<TrainManagementApp.Bogie>> grouped = TrainManagementApp.groupBogiesByType(bogies);
+
+        // Verify keys exist
+        assertTrue(grouped.containsKey("Sleeper"));
+        assertTrue(grouped.containsKey("AC Chair"));
+        assertTrue(grouped.containsKey("First Class"));
     }
 
     @Test
-    public void testFilter_CapacityEqualToThreshold() {
+    public void testGrouping_MultipleBogiesInSameGroup() {
         List<TrainManagementApp.Bogie> bogies = TrainManagementApp.getBogieList();
-        // Threshold 72: Should NOT include Sleeper (since we use > not >=)
-        List<TrainManagementApp.Bogie> result = TrainManagementApp.filterHighCapacityBogies(bogies, 72);
-        // Only General(90) remains
-        assertEquals(1, result.size());
-        assertEquals("General", result.get(0).name);
+        Map<String, List<TrainManagementApp.Bogie>> grouped = TrainManagementApp.groupBogiesByType(bogies);
+
+        // Verify that Sleeper group has 2 bogies
+        assertEquals(2, grouped.get("Sleeper").size(), "Sleeper group should contain 2 bogies.");
     }
 
     @Test
-    public void testFilter_CapacityLessThanThreshold() {
-        List<TrainManagementApp.Bogie> bogies = TrainManagementApp.getBogieList();
-        List<TrainManagementApp.Bogie> result = TrainManagementApp.filterHighCapacityBogies(bogies, 100);
-        assertTrue(result.isEmpty(), "List should be empty for threshold higher than all capacities.");
-    }
-
-    @Test
-    public void testFilter_NoBogiesMatching() {
-        List<TrainManagementApp.Bogie> bogies = TrainManagementApp.getBogieList();
-        List<TrainManagementApp.Bogie> result = TrainManagementApp.filterHighCapacityBogies(bogies, 150);
-        assertEquals(0, result.size());
-    }
-
-    @Test
-    public void testFilter_AllBogiesMatching() {
-        List<TrainManagementApp.Bogie> bogies = TrainManagementApp.getBogieList();
-        List<TrainManagementApp.Bogie> result = TrainManagementApp.filterHighCapacityBogies(bogies, 10);
-        assertEquals(bogies.size(), result.size());
-    }
-
-    @Test
-    public void testFilter_EmptyBogieList() {
+    public void testGrouping_EmptyBogieList() {
         List<TrainManagementApp.Bogie> emptyList = new ArrayList<>();
-        List<TrainManagementApp.Bogie> result = TrainManagementApp.filterHighCapacityBogies(emptyList, 50);
-        assertTrue(result.isEmpty());
+        Map<String, List<TrainManagementApp.Bogie>> result = TrainManagementApp.groupBogiesByType(emptyList);
+        assertTrue(result.isEmpty(), "Grouping an empty list should return an empty map.");
     }
 
     @Test
-    public void testFilter_OriginalListUnchanged() {
+    public void testGrouping_SingleBogieCategory() {
+        List<TrainManagementApp.Bogie> singleList = new ArrayList<>();
+        singleList.add(new TrainManagementApp.Bogie("Cargo", 100));
+
+        Map<String, List<TrainManagementApp.Bogie>> result = TrainManagementApp.groupBogiesByType(singleList);
+        assertEquals(1, result.size());
+        assertEquals(1, result.get("Cargo").size());
+    }
+
+    @Test
+    public void testGrouping_OriginalListUnchanged() {
         List<TrainManagementApp.Bogie> bogies = TrainManagementApp.getBogieList();
         int originalSize = bogies.size();
 
-        TrainManagementApp.filterHighCapacityBogies(bogies, 60);
+        TrainManagementApp.groupBogiesByType(bogies);
 
-        assertEquals(originalSize, bogies.size(), "Original list should not be modified by the stream.");
+        assertEquals(originalSize, bogies.size(), "Original list must remain unchanged after grouping.");
     }
 }

@@ -1,19 +1,20 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * =======================================================
  * MAIN CLASS - TrainManagementApp
  * =======================================================
- * Use Case 8: Filter Passenger Bogies Using Streams
+ * Use Case 9: Group Bogies by Type
  * Description:
- * This class demonstrates the use of Stream API to filter
- * bogies based on seating capacity threshold.
+ * This class uses Stream collectors to group bogies into
+ * categories based on their name/type.
  */
 public class TrainManagementApp {
 
-    // Inner Bogie class (Reused from UC7)
+    // Inner Bogie class (Same as UC7 & UC8)
     public static class Bogie {
         String name;
         int capacity;
@@ -31,41 +32,39 @@ public class TrainManagementApp {
 
     public static void main(String[] args) {
         System.out.println("=======================================");
-        System.out.println(" UC8 - Filter Passenger Bogies (Streams) ");
+        System.out.println(" UC9 - Group Bogies by Type (Streams) ");
         System.out.println("=======================================\n");
 
-        // 1. Initialize the list
+        // 1. Initialize the list with some duplicate types for grouping
         List<Bogie> bogies = getBogieList();
 
-        System.out.println("Before Filtering:");
+        System.out.println("Original Bogie List:");
         bogies.forEach(System.out::println);
 
-        // 2. Apply Stream Filtering (Threshold > 60)
-        List<Bogie> highCapacityBogies = filterHighCapacityBogies(bogies, 60);
+        // 2. Group Bogies using groupingBy
+        Map<String, List<Bogie>> groupedBogies = groupBogiesByType(bogies);
 
-        System.out.println("\nAfter Filtering (Capacity > 60):");
-        if (highCapacityBogies.isEmpty()) {
-            System.out.println("No bogies found matching the criteria.");
-        } else {
-            highCapacityBogies.forEach(System.out::println);
-        }
+        // 3. Display the grouped results
+        System.out.println("\nGrouped Bogies by Type:");
+        groupedBogies.forEach((type, list) -> {
+            System.out.println(type + " -> " + list);
+        });
 
-        System.out.println("\nUC8 stream filtering completed successfully...");
+        System.out.println("\nUC9 data aggregation completed successfully...");
     }
 
     /**
-     * Logic: Converts list to stream, filters by capacity, and collects to new
-     * list.
+     * Groups bogies by their name using the groupingBy collector.
      */
-    public static List<Bogie> filterHighCapacityBogies(List<Bogie> bogies, int threshold) {
+    public static Map<String, List<Bogie>> groupBogiesByType(List<Bogie> bogies) {
         return bogies.stream()
-                .filter(b -> b.capacity > threshold)
-                .collect(Collectors.toList());
+                .collect(Collectors.groupingBy(b -> b.name));
     }
 
     public static List<Bogie> getBogieList() {
         List<Bogie> bogies = new ArrayList<>();
         bogies.add(new Bogie("Sleeper", 72));
+        bogies.add(new Bogie("Sleeper", 72)); // Added second sleeper for grouping demo
         bogies.add(new Bogie("AC Chair", 56));
         bogies.add(new Bogie("First Class", 24));
         bogies.add(new Bogie("General", 90));
