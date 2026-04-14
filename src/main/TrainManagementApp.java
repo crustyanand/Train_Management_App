@@ -4,64 +4,55 @@ import java.util.Arrays;
  * =======================================================
  * MAIN CLASS - TrainManagementApp
  * =======================================================
- * Use Case 19: Binary Search for Bogie ID (Optimized)
+ * Use Case 20: Exception Handling During Search Operations
  * Description:
- * Implements an O(log n) search algorithm on sorted bogie
- * data to ensure high-speed lookups in large consists.
+ * Implements state validation to prevent searching empty
+ * train consists using IllegalStateException.
  */
 public class TrainManagementApp {
 
     public static void main(String[] args) {
         System.out.println("=======================================");
-        System.out.println(" UC19 - Binary Search (Optimized) ");
+        System.out.println(" UC20 - Defensive Search Validation ");
         System.out.println("=======================================\n");
 
-        // Unsorted input IDs
-        String[] bogieIDs = { "BG309", "BG101", "BG550", "BG205", "BG412" };
-        String searchKey = "BG205";
+        // Case 1: Searching an empty train
+        String[] emptyConsist = {};
+        try {
+            System.out.println("Attempting search on empty consist...");
+            safeSearch(emptyConsist, "BG101");
+        } catch (IllegalStateException e) {
+            System.out.println("CAUGHT EXCEPTION: " + e.getMessage());
+        }
 
-        // 1. Precondition: Data must be sorted for Binary Search
-        Arrays.sort(bogieIDs);
-        System.out.println("Sorted Consist: " + Arrays.toString(bogieIDs));
-        System.out.println("Searching for: " + searchKey);
+        // Case 2: Searching a valid train
+        String[] validConsist = { "BG101", "BG205", "BG309" };
+        try {
+            System.out.println("\nAttempting search on valid consist...");
+            boolean found = safeSearch(validConsist, "BG205");
+            System.out.println("Result: " + (found ? "Bogie Found!" : "Bogie Not Found."));
+        } catch (IllegalStateException e) {
+            System.err.println(e.getMessage());
+        }
 
-        // 2. Execute Binary Search
-        boolean found = binarySearch(bogieIDs, searchKey);
-
-        // 3. Display Result
-        System.out.println("\nResult: " + (found ? "Bogie Found!" : "Bogie Not Found."));
-
-        System.out.println("\nUC19 optimized search completed.");
+        System.out.println("\nUC20 defensive logic completed.");
     }
 
     /**
-     * Logic: Divide and Conquer.
-     * Repeatedly halves the search range based on lexicographical comparison.
+     * Logic: Validates state before searching.
+     * 
+     * @throws IllegalStateException if the array is null or empty.
      */
-    public static boolean binarySearch(String[] array, String key) {
-        if (array == null || array.length == 0 || key == null) {
-            return false;
+    public static boolean safeSearch(String[] bogieIDs, String key) {
+        // 1. Fail-Fast Validation
+        if (bogieIDs == null || bogieIDs.length == 0) {
+            throw new IllegalStateException("Search failed: No bogies available in the train consist.");
         }
 
-        // Precaution: Ensure array is sorted (requirement for Binary Search)
-        Arrays.sort(array);
+        // 2. Proceed with search logic if state is valid
+        Arrays.sort(bogieIDs); // Precondition for binary search
+        int index = Arrays.binarySearch(bogieIDs, key);
 
-        int low = 0;
-        int high = array.length - 1;
-
-        while (low <= high) {
-            int mid = low + (high - low) / 2;
-            int comparison = key.compareTo(array[mid]);
-
-            if (comparison == 0) {
-                return true; // Key found
-            } else if (comparison > 0) {
-                low = mid + 1; // Look in the right half
-            } else {
-                high = mid - 1; // Look in the left half
-            }
-        }
-
-        return false; // Key not found
+        return index >= 0;
     }
 }
