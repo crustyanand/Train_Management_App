@@ -1,26 +1,24 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.Set;
-import java.util.Iterator;
+import java.util.Map;
 
 public class TrainManagementAppTest {
 
     @Test
-    public void testLinkedHashSetBehavior() {
-        Set<String> formation = TrainManagementApp.getOrderedUniqueFormation();
+    public void testBogieCapacityMapping() {
+        Map<String, Integer> capacities = TrainManagementApp.getBogieCapacities();
 
-        // 1. Verify uniqueness (Size should be 4, not 5)
-        assertEquals(4, formation.size(), "LinkedHashSet should have ignored the duplicate 'Sleeper'.");
+        // 1. Verify all 4 bogie types are present
+        assertEquals(4, capacities.size(), "There should be exactly 4 bogie mappings.");
 
-        // 2. Verify insertion order preservation
-        Iterator<String> iterator = formation.iterator();
-        assertEquals("Engine", iterator.next());
-        assertEquals("Sleeper", iterator.next());
-        assertEquals("Cargo", iterator.next());
-        assertEquals("Guard", iterator.next());
+        // 2. Verify specific capacity values
+        assertEquals(72, capacities.get("Sleeper"), "Sleeper capacity should be 72.");
+        assertEquals(56, capacities.get("AC Chair"), "AC Chair capacity should be 56.");
+        assertEquals(24, capacities.get("First Class"), "First Class capacity should be 24.");
+        assertEquals(120, capacities.get("Cargo"), "Cargo capacity should be 120.");
 
-        // 3. Verify specific content
-        assertTrue(formation.contains("Cargo"), "Formation must contain 'Cargo'.");
-        assertFalse(formation.isEmpty());
+        // 3. Verify existence of keys
+        assertTrue(capacities.containsKey("Sleeper"));
+        assertFalse(capacities.containsKey("Engine"), "Engine was not added to the capacity map.");
     }
 }
