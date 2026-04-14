@@ -4,51 +4,64 @@ import java.util.Arrays;
  * =======================================================
  * MAIN CLASS - TrainManagementApp
  * =======================================================
- * Use Case 18: Linear Search for Bogie ID (Array-Based)
+ * Use Case 19: Binary Search for Bogie ID (Optimized)
  * Description:
- * Implements a sequential search to locate a specific bogie
- * ID within the train consist.
+ * Implements an O(log n) search algorithm on sorted bogie
+ * data to ensure high-speed lookups in large consists.
  */
 public class TrainManagementApp {
 
     public static void main(String[] args) {
         System.out.println("=======================================");
-        System.out.println(" UC18 - Linear Search for Bogie ID ");
+        System.out.println(" UC19 - Binary Search (Optimized) ");
         System.out.println("=======================================\n");
 
-        // 1. Array of bogie IDs
-        String[] bogieIDs = { "BG101", "BG205", "BG309", "BG412", "BG550" };
-        String searchKey = "BG309";
+        // Unsorted input IDs
+        String[] bogieIDs = { "BG309", "BG101", "BG550", "BG205", "BG412" };
+        String searchKey = "BG205";
 
-        System.out.println("Train Consist IDs: " + Arrays.toString(bogieIDs));
-        System.out.println("Searching for Bogie ID: " + searchKey);
+        // 1. Precondition: Data must be sorted for Binary Search
+        Arrays.sort(bogieIDs);
+        System.out.println("Sorted Consist: " + Arrays.toString(bogieIDs));
+        System.out.println("Searching for: " + searchKey);
 
-        // 2. Execute Linear Search
-        boolean found = linearSearch(bogieIDs, searchKey);
+        // 2. Execute Binary Search
+        boolean found = binarySearch(bogieIDs, searchKey);
 
         // 3. Display Result
-        if (found) {
-            System.out.println("\nSUCCESS: Bogie " + searchKey + " identified in the consist.");
-        } else {
-            System.out.println("\nFAILED: Bogie " + searchKey + " not found.");
-        }
+        System.out.println("\nResult: " + (found ? "Bogie Found!" : "Bogie Not Found."));
 
-        System.out.println("\nUC18 searching logic completed.");
+        System.out.println("\nUC19 optimized search completed.");
     }
 
     /**
-     * Logic: Sequentially checks each element.
-     * Returns true if match found, false otherwise.
+     * Logic: Divide and Conquer.
+     * Repeatedly halves the search range based on lexicographical comparison.
      */
-    public static boolean linearSearch(String[] array, String key) {
-        if (array == null || key == null)
+    public static boolean binarySearch(String[] array, String key) {
+        if (array == null || array.length == 0 || key == null) {
             return false;
+        }
 
-        for (String id : array) {
-            if (id.equals(key)) {
-                return true; // Early termination
+        // Precaution: Ensure array is sorted (requirement for Binary Search)
+        Arrays.sort(array);
+
+        int low = 0;
+        int high = array.length - 1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            int comparison = key.compareTo(array[mid]);
+
+            if (comparison == 0) {
+                return true; // Key found
+            } else if (comparison > 0) {
+                low = mid + 1; // Look in the right half
+            } else {
+                high = mid - 1; // Look in the left half
             }
         }
-        return false; // Traversed entire list without a match
+
+        return false; // Key not found
     }
 }

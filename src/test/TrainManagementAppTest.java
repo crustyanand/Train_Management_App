@@ -3,36 +3,41 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TrainManagementAppTest {
 
-    private final String[] consist = { "BG101", "BG205", "BG309", "BG412", "BG550" };
-
     @Test
-    public void testSearch_BogieFound() {
-        assertTrue(TrainManagementApp.linearSearch(consist, "BG309"),
-                "Search should find an existing ID in the middle of the array.");
+    public void testBinarySearch_BogieFound() {
+        String[] consist = { "BG101", "BG205", "BG309", "BG412", "BG550" };
+        assertTrue(TrainManagementApp.binarySearch(consist, "BG309"));
     }
 
     @Test
-    public void testSearch_BogieNotFound() {
-        assertFalse(TrainManagementApp.linearSearch(consist, "BG999"),
-                "Search should return false if the ID does not exist.");
+    public void testBinarySearch_BogieNotFound() {
+        String[] consist = { "BG101", "BG205", "BG309", "BG412", "BG550" };
+        assertFalse(TrainManagementApp.binarySearch(consist, "BG999"));
     }
 
     @Test
-    public void testSearch_FirstElementMatch() {
-        assertTrue(TrainManagementApp.linearSearch(consist, "BG101"),
-                "Search should correctly identify the first element.");
+    public void testBinarySearch_FirstElementMatch() {
+        String[] consist = { "BG101", "BG205", "BG309", "BG412", "BG550" };
+        assertTrue(TrainManagementApp.binarySearch(consist, "BG101"));
     }
 
     @Test
-    public void testSearch_LastElementMatch() {
-        assertTrue(TrainManagementApp.linearSearch(consist, "BG550"),
-                "Search should correctly identify the last element.");
+    public void testBinarySearch_LastElementMatch() {
+        String[] consist = { "BG101", "BG205", "BG309", "BG412", "BG550" };
+        assertTrue(TrainManagementApp.binarySearch(consist, "BG550"));
     }
 
     @Test
-    public void testSearch_SingleElementArray() {
-        String[] single = { "BG101" };
-        assertTrue(TrainManagementApp.linearSearch(single, "BG101"));
-        assertFalse(TrainManagementApp.linearSearch(single, "BG202"));
+    public void testBinarySearch_EmptyArray() {
+        String[] empty = {};
+        assertFalse(TrainManagementApp.binarySearch(empty, "BG101"));
+    }
+
+    @Test
+    public void testBinarySearch_UnsortedInputHandled() {
+        // The binarySearch method sorts the input internally to maintain the
+        // precondition
+        String[] unsorted = { "BG309", "BG101", "BG550", "BG205", "BG412" };
+        assertTrue(TrainManagementApp.binarySearch(unsorted, "BG205"));
     }
 }
