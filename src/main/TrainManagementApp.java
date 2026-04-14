@@ -4,40 +4,51 @@ import java.util.Arrays;
  * =======================================================
  * MAIN CLASS - TrainManagementApp
  * =======================================================
- * Use Case 17: Sort Bogie Names Using Arrays.sort()
+ * Use Case 18: Linear Search for Bogie ID (Array-Based)
  * Description:
- * Replaces manual algorithms with Java's optimized built-in
- * sorting utilities for production-ready performance.
+ * Implements a sequential search to locate a specific bogie
+ * ID within the train consist.
  */
 public class TrainManagementApp {
 
     public static void main(String[] args) {
         System.out.println("=======================================");
-        System.out.println(" UC17 - Optimized Sorting (Arrays.sort) ");
+        System.out.println(" UC18 - Linear Search for Bogie ID ");
         System.out.println("=======================================\n");
 
-        // 1. Array of bogie type names
-        String[] bogieNames = { "Sleeper", "AC Chair", "First Class", "General", "Luxury" };
+        // 1. Array of bogie IDs
+        String[] bogieIDs = { "BG101", "BG205", "BG309", "BG412", "BG550" };
+        String searchKey = "BG309";
 
-        System.out.println("Unsorted Bogie Names: " + Arrays.toString(bogieNames));
+        System.out.println("Train Consist IDs: " + Arrays.toString(bogieIDs));
+        System.out.println("Searching for Bogie ID: " + searchKey);
 
-        // 2. Perform Optimized Sort
-        // This uses natural ordering (alphabetical for Strings)
-        Arrays.sort(bogieNames);
+        // 2. Execute Linear Search
+        boolean found = linearSearch(bogieIDs, searchKey);
 
         // 3. Display Result
-        System.out.println("Sorted Bogie Names  : " + Arrays.toString(bogieNames));
+        if (found) {
+            System.out.println("\nSUCCESS: Bogie " + searchKey + " identified in the consist.");
+        } else {
+            System.out.println("\nFAILED: Bogie " + searchKey + " not found.");
+        }
 
-        System.out.println("\nUC17 optimized library sorting completed.");
+        System.out.println("\nUC18 searching logic completed.");
     }
 
     /**
-     * Helper method for testing purposes
+     * Logic: Sequentially checks each element.
+     * Returns true if match found, false otherwise.
      */
-    public static String[] sortNames(String[] names) {
-        if (names != null) {
-            Arrays.sort(names);
+    public static boolean linearSearch(String[] array, String key) {
+        if (array == null || key == null)
+            return false;
+
+        for (String id : array) {
+            if (id.equals(key)) {
+                return true; // Early termination
+            }
         }
-        return names;
+        return false; // Traversed entire list without a match
     }
 }
