@@ -1,24 +1,28 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.Map;
+import java.util.Comparator;
+import java.util.List;
 
 public class TrainManagementAppTest {
 
     @Test
-    public void testBogieCapacityMapping() {
-        Map<String, Integer> capacities = TrainManagementApp.getBogieCapacities();
+    public void testBogieSortingByCapacity() {
+        List<TrainManagementApp.Bogie> bogies = TrainManagementApp.getBogieList();
 
-        // 1. Verify all 4 bogie types are present
-        assertEquals(4, capacities.size(), "There should be exactly 4 bogie mappings.");
+        // Perform sorting
+        bogies.sort(Comparator.comparingInt(b -> b.capacity));
 
-        // 2. Verify specific capacity values
-        assertEquals(72, capacities.get("Sleeper"), "Sleeper capacity should be 72.");
-        assertEquals(56, capacities.get("AC Chair"), "AC Chair capacity should be 56.");
-        assertEquals(24, capacities.get("First Class"), "First Class capacity should be 24.");
-        assertEquals(120, capacities.get("Cargo"), "Cargo capacity should be 120.");
+        // Verify the order: First Class (24), AC Chair (56), Sleeper (72), General (90)
+        assertEquals("First Class", bogies.get(0).name);
+        assertEquals(24, bogies.get(0).capacity);
 
-        // 3. Verify existence of keys
-        assertTrue(capacities.containsKey("Sleeper"));
-        assertFalse(capacities.containsKey("Engine"), "Engine was not added to the capacity map.");
+        assertEquals("AC Chair", bogies.get(1).name);
+        assertEquals(56, bogies.get(1).capacity);
+
+        assertEquals("Sleeper", bogies.get(2).name);
+        assertEquals(72, bogies.get(2).capacity);
+
+        assertEquals("General", bogies.get(3).name);
+        assertEquals(90, bogies.get(3).capacity);
     }
 }
