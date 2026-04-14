@@ -5,59 +5,69 @@ import java.util.List;
  * =======================================================
  * MAIN CLASS - TrainManagementApp
  * =======================================================
- * Use Case 14: Handle Invalid Bogie Capacity (Custom Exception)
+ * Use Case 15: Safe Cargo Assignment Using try-catch-finally
  * Description:
- * Enforces business rules during object creation.
+ * Handles dynamic cargo assignment with runtime safety checks.
  */
 public class TrainManagementApp {
 
-    public static class Bogie {
-        String name;
-        int capacity;
+    public static class GoodsBogie {
+        String type;
+        String cargo;
 
-        public Bogie(String name, int capacity) throws InvalidCapacityException {
-            if (capacity <= 0) {
-                throw new InvalidCapacityException("Capacity must be greater than zero");
+        public GoodsBogie(String type) {
+            this.type = type;
+            this.cargo = "Empty";
+        }
+
+        /**
+         * Logic: Throws Runtime Exception if Petroleum is assigned to Rectangular
+         * bogie.
+         */
+        public void assignCargo(String newCargo) {
+            System.out.println("\n>>> Attempting to assign [" + newCargo + "] to [" + type + "] bogie...");
+
+            try {
+                if (type.equalsIgnoreCase("Rectangular") && newCargo.equalsIgnoreCase("Petroleum")) {
+                    throw new CargoSafetyException(
+                            "CRITICAL SAFETY VIOLATION: Petroleum cannot be carried in a Rectangular bogie!");
+                }
+                this.cargo = newCargo;
+                System.out.println("SUCCESS: Cargo assigned successfully.");
+            } catch (CargoSafetyException e) {
+                System.out.println("CATCH BLOCK: " + e.getMessage());
+            } finally {
+                System.out.println("FINALLY BLOCK: Assignment process completed for this bogie.");
             }
-            this.name = name;
-            this.capacity = capacity;
         }
 
         @Override
         public String toString() {
-            return name + " [" + capacity + " seats]";
+            return type + " Bogie (Cargo: " + cargo + ")";
         }
     }
 
     public static void main(String[] args) {
         System.out.println("=======================================");
-        System.out.println(" UC14 - Custom Exception Handling ");
+        System.out.println(" UC15 - Safe Cargo Assignment (try-catch-finally) ");
         System.out.println("=======================================\n");
 
-        // 1. Attempt to create a valid bogie
-        try {
-            Bogie validBogie = new Bogie("Sleeper", 72);
-            System.out.println("SUCCESS: Created " + validBogie);
-        } catch (InvalidCapacityException e) {
-            System.err.println("ERROR: " + e.getMessage());
-        }
+        GoodsBogie g1 = new GoodsBogie("Cylindrical");
+        GoodsBogie g2 = new GoodsBogie("Rectangular");
 
-        // 2. Attempt to create an invalid bogie (Zero Capacity)
-        try {
-            System.out.println("\nAttempting to create bogie with 0 capacity...");
-            Bogie invalidBogie = new Bogie("AC Chair", 0);
-        } catch (InvalidCapacityException e) {
-            System.out.println("CAUGHT EXCEPTION: " + e.getMessage());
-        }
+        // 1. Safe Assignment
+        g1.assignCargo("Petroleum");
 
-        // 3. Attempt to create an invalid bogie (Negative Capacity)
-        try {
-            System.out.println("\nAttempting to create bogie with -10 capacity...");
-            Bogie invalidBogie = new Bogie("First Class", -10);
-        } catch (InvalidCapacityException e) {
-            System.out.println("CAUGHT EXCEPTION: " + e.getMessage());
-        }
+        // 2. Unsafe Assignment (Will trigger catch and finally)
+        g2.assignCargo("Petroleum");
 
-        System.out.println("\nUC14 validation logic completed...");
+        // 3. System continues running
+        g2.assignCargo("Coal");
+
+        System.out.println("\nFinal Train Status:");
+        System.out.println(g1);
+        System.out.println(g2);
+
+        System.out.println("\nUC15 runtime safety management completed.");
     }
 }
