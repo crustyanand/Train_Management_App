@@ -2,54 +2,40 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class TrainManagementAppTest {
 
     @Test
-    public void testGrouping_BogiesGroupedByType() {
+    public void testReduce_TotalSeatCalculation() {
         List<TrainManagementApp.Bogie> bogies = TrainManagementApp.getBogieList();
-        Map<String, List<TrainManagementApp.Bogie>> grouped = TrainManagementApp.groupBogiesByType(bogies);
-
-        // Verify keys exist
-        assertTrue(grouped.containsKey("Sleeper"));
-        assertTrue(grouped.containsKey("AC Chair"));
-        assertTrue(grouped.containsKey("First Class"));
+        // 72 + 56 + 24 + 90 = 242
+        int total = TrainManagementApp.calculateTotalSeats(bogies);
+        assertEquals(242, total, "Total seat count should be 242.");
     }
 
     @Test
-    public void testGrouping_MultipleBogiesInSameGroup() {
-        List<TrainManagementApp.Bogie> bogies = TrainManagementApp.getBogieList();
-        Map<String, List<TrainManagementApp.Bogie>> grouped = TrainManagementApp.groupBogiesByType(bogies);
+    public void testReduce_SingleBogieCapacity() {
+        List<TrainManagementApp.Bogie> list = new ArrayList<>();
+        list.add(new TrainManagementApp.Bogie("Sleeper", 72));
 
-        // Verify that Sleeper group has 2 bogies
-        assertEquals(2, grouped.get("Sleeper").size(), "Sleeper group should contain 2 bogies.");
+        int total = TrainManagementApp.calculateTotalSeats(list);
+        assertEquals(72, total, "Total should equal the single bogie's capacity.");
     }
 
     @Test
-    public void testGrouping_EmptyBogieList() {
+    public void testReduce_EmptyBogieList() {
         List<TrainManagementApp.Bogie> emptyList = new ArrayList<>();
-        Map<String, List<TrainManagementApp.Bogie>> result = TrainManagementApp.groupBogiesByType(emptyList);
-        assertTrue(result.isEmpty(), "Grouping an empty list should return an empty map.");
+        int total = TrainManagementApp.calculateTotalSeats(emptyList);
+        assertEquals(0, total, "Empty list should result in 0 seats (identity value).");
     }
 
     @Test
-    public void testGrouping_SingleBogieCategory() {
-        List<TrainManagementApp.Bogie> singleList = new ArrayList<>();
-        singleList.add(new TrainManagementApp.Bogie("Cargo", 100));
-
-        Map<String, List<TrainManagementApp.Bogie>> result = TrainManagementApp.groupBogiesByType(singleList);
-        assertEquals(1, result.size());
-        assertEquals(1, result.get("Cargo").size());
-    }
-
-    @Test
-    public void testGrouping_OriginalListUnchanged() {
+    public void testReduce_OriginalListUnchanged() {
         List<TrainManagementApp.Bogie> bogies = TrainManagementApp.getBogieList();
         int originalSize = bogies.size();
 
-        TrainManagementApp.groupBogiesByType(bogies);
+        TrainManagementApp.calculateTotalSeats(bogies);
 
-        assertEquals(originalSize, bogies.size(), "Original list must remain unchanged after grouping.");
+        assertEquals(originalSize, bogies.size(), "The stream operation must not modify the original list.");
     }
 }
