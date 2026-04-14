@@ -4,49 +4,40 @@ import java.util.Arrays;
  * =======================================================
  * MAIN CLASS - TrainManagementApp
  * =======================================================
- * Use Case 16: Sort Passenger Bogies by Capacity (Bubble Sort)
+ * Use Case 17: Sort Bogie Names Using Arrays.sort()
  * Description:
- * Implements a manual sorting algorithm to organize bogie
- * capacities without using built-in library methods.
+ * Replaces manual algorithms with Java's optimized built-in
+ * sorting utilities for production-ready performance.
  */
 public class TrainManagementApp {
 
     public static void main(String[] args) {
         System.out.println("=======================================");
-        System.out.println(" UC16 - Manual Sorting (Bubble Sort) ");
+        System.out.println(" UC17 - Optimized Sorting (Arrays.sort) ");
         System.out.println("=======================================\n");
 
-        // 1. Initial capacity data
-        int[] capacities = { 72, 56, 24, 70, 60 };
+        // 1. Array of bogie type names
+        String[] bogieNames = { "Sleeper", "AC Chair", "First Class", "General", "Luxury" };
 
-        System.out.println("Original Capacities: " + Arrays.toString(capacities));
+        System.out.println("Unsorted Bogie Names: " + Arrays.toString(bogieNames));
 
-        // 2. Perform Bubble Sort
-        bubbleSort(capacities);
+        // 2. Perform Optimized Sort
+        // This uses natural ordering (alphabetical for Strings)
+        Arrays.sort(bogieNames);
 
         // 3. Display Result
-        System.out.println("Sorted Capacities  : " + Arrays.toString(capacities));
+        System.out.println("Sorted Bogie Names  : " + Arrays.toString(bogieNames));
 
-        System.out.println("\nUC16 algorithmic sorting completed successfully.");
+        System.out.println("\nUC17 optimized library sorting completed.");
     }
 
     /**
-     * Logic: Bubble Sort Algorithm
-     * Compares adjacent elements and swaps them if they are in descending order.
+     * Helper method for testing purposes
      */
-    public static void bubbleSort(int[] array) {
-        int n = array.length;
-        // Outer loop for number of passes
-        for (int i = 0; i < n - 1; i++) {
-            // Inner loop for comparing adjacent elements
-            for (int j = 0; j < n - i - 1; j++) {
-                if (array[j] > array[j + 1]) {
-                    // Swap logic using a temporary variable
-                    int temp = array[j];
-                    array[j] = array[j + 1];
-                    array[j + 1] = temp;
-                }
-            }
+    public static String[] sortNames(String[] names) {
+        if (names != null) {
+            Arrays.sort(names);
         }
+        return names;
     }
 }

@@ -4,47 +4,47 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TrainManagementAppTest {
 
     @Test
-    public void testSort_BasicSorting() {
-        int[] input = { 72, 56, 24, 70, 60 };
-        int[] expected = { 24, 56, 60, 70, 72 };
+    public void testSort_BasicAlphabeticalSorting() {
+        String[] input = { "Sleeper", "AC Chair", "First Class", "General", "Luxury" };
+        String[] expected = { "AC Chair", "First Class", "General", "Luxury", "Sleeper" };
 
-        TrainManagementApp.bubbleSort(input);
-        assertArrayEquals(expected, input, "Array should be sorted in ascending order.");
+        TrainManagementApp.sortNames(input);
+        assertArrayEquals(expected, input, "The names should be in alphabetical order.");
+    }
+
+    @Test
+    public void testSort_UnsortedInput() {
+        String[] input = { "Luxury", "General", "Sleeper", "AC Chair" };
+        String[] expected = { "AC Chair", "General", "Luxury", "Sleeper" };
+
+        TrainManagementApp.sortNames(input);
+        assertArrayEquals(expected, input);
     }
 
     @Test
     public void testSort_AlreadySortedArray() {
-        int[] input = { 10, 20, 30 };
-        int[] expected = { 10, 20, 30 };
+        String[] input = { "AC Chair", "First Class", "General" };
+        String[] expected = { "AC Chair", "First Class", "General" };
 
-        TrainManagementApp.bubbleSort(input);
+        TrainManagementApp.sortNames(input);
         assertArrayEquals(expected, input);
     }
 
     @Test
-    public void testSort_DuplicateValues() {
-        int[] input = { 50, 20, 50, 10 };
-        int[] expected = { 10, 20, 50, 50 };
+    public void testSort_DuplicateBogieNames() {
+        String[] input = { "Sleeper", "AC Chair", "Sleeper", "General" };
+        String[] expected = { "AC Chair", "General", "Sleeper", "Sleeper" };
 
-        TrainManagementApp.bubbleSort(input);
-        assertArrayEquals(expected, input);
+        TrainManagementApp.sortNames(input);
+        assertArrayEquals(expected, input, "Duplicate names should stay together in the sorted list.");
     }
 
     @Test
     public void testSort_SingleElementArray() {
-        int[] input = { 100 };
-        int[] expected = { 100 };
+        String[] input = { "Sleeper" };
+        String[] expected = { "Sleeper" };
 
-        TrainManagementApp.bubbleSort(input);
-        assertArrayEquals(expected, input);
-    }
-
-    @Test
-    public void testSort_AllEqualValues() {
-        int[] input = { 40, 40, 40 };
-        int[] expected = { 40, 40, 40 };
-
-        TrainManagementApp.bubbleSort(input);
+        TrainManagementApp.sortNames(input);
         assertArrayEquals(expected, input);
     }
 }
